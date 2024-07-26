@@ -1,0 +1,19 @@
+
+
+-------- todo ---------------
+
+[17-07-2024] - Set user in local storage
+[17-07-2024] - Add new field on user => last active
+[18-07-2024] - Add new field on user => avatar
+[18-07-2024] - Implement socket.io for chatting
+[20-07-2024] - Add new column with project schema that is project creator
+[21-07-2024] - Complete project GET api
+[21-07-2024] - Complete the  task adding form
+[22-07-2024] - Add good date picker     
+[23-07-2024] - Implement chatting
+
+
+-------- done todo -----------
+
+
+references => https://www.geeksforgeeks.org/real-time-notification-system-using-next-js-and-socket-io/

@@ -1,0 +1,166 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Organization {
+  id        Int        @id @default(autoincrement())
+  name      String
+  employees Employee[]
+  projects  Project[]
+  createdAt DateTime   @default(now())
+}
+
+model Role {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  description String?
+  employees   Employee[]
+  createdAt   DateTime   @default(now())
+}
+
+model Project {
+  id             Int          @id @default(autoincrement())
+  name           String
+  description    String?
+  organizationId Int
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  employees      Employee[]   @relation("ProjectEmployees")
+  todoBoards     TodoBoard[]
+  taskBoards     TaskBoard[]
+  creatorId      Int
+  // creator        Employee     @relation("ProjectCreator", fields: [creatorId], references: [id])
+  createdAt      DateTime     @default(now())
+}
+
+model Employee {
+  id               Int          @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  email            String       @unique
+  password         String
+  lastActive       DateTime?    @default(now())
+  organizationId   Int
+  organization     Organization @relation(fields: [organizationId], references: [id])
+  roleId           Int
+  role             Role         @relation(fields: [roleId], references: [id])
+  projects         Project[]    @relation("ProjectEmployees")
+  // createdProjects  Project[]    @relation("ProjectCreator")
+  todos            Todo[]
+  tasks            Task[]       @relation("TaskEmployees")
+  individualTasks  Task[]       @relation("TaskEmployee")
+  posts            Post[]
+  comments         Comment[]
+  insights         Insight[]
+  likes            Like[]
+  messagesSent     Message[]    @relation("SentMessages")
+  messagesReceived Message[]    @relation("ReceivedMessages")
+  createdAt        DateTime     @default(now())
+  TodoBoard        TodoBoard[]
+  TaskBoard        TaskBoard[]
+}
+
+model TodoBoard {
+  id        Int      @id @default(autoincrement())
+  name      String
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id])
+  todos     Todo[]
+  creatorId Int
+  creator   Employee @relation(fields: [creatorId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Todo {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  status      String    @default("pending")
+  dueDate     DateTime?
+  employeeId  Int
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  todoBoardId Int
+  todoBoard   TodoBoard @relation(fields: [todoBoardId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model TaskBoard {
+  id        Int      @id @default(autoincrement())
+  name      String
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id])
+  tasks     Task[]
+  creatorId Int
+  creator   Employee @relation(fields: [creatorId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String? 
+  status      String     @default("pending")
+  dueDate     DateTime?
+  employees   Employee[] @relation("TaskEmployees")
+  employeeId  Int
+  employee    Employee   @relation("TaskEmployee", fields: [employeeId], references: [id])
+  taskBoardId Int
+  taskBoard   TaskBoard  @relation(fields: [taskBoardId], references: [id])
+  createdAt   DateTime   @default(now())
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  content    String
+  mediaUrl   String?
+  createdAt  DateTime @default(now())
+  senderId   Int
+  sender     Employee @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId Int
+  receiver   Employee @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String
+  createdAt DateTime  @default(now())
+  authorId  Int
+  author    Employee  @relation(fields: [authorId], references: [id])
+  comments  Comment[]
+  insights  Insight[]
+  likes     Like[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  authorId  Int
+  author    Employee @relation(fields: [authorId], references: [id])
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+}
+
+model Insight {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  authorId  Int
+  author    Employee @relation(fields: [authorId], references: [id])
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+}
+
+model Like {
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
+  employeeId Int
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  postId     Int
+  post       Post     @relation(fields: [postId], references: [id])
+}
