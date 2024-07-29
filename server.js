@@ -1,15 +1,15 @@
 //server.js
 
-import express, { urlencoded, json } from "express";
+const express = require("express");
 const app = express();
 const PORT = 4000;
 
-app.use(urlencoded({ extended: true }));
-app.use(json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 //New imports
 const http = require("http").Server(app);
-import cors from "cors";
+const cors = require("cors");
 
 app.use(cors());
 
