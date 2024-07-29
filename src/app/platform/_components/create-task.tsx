@@ -30,7 +30,7 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@radix-ui/react-popover";
-import useFetch from "@/hooks/use-fetch";
+import useFetch from "@/hooks/useFetch";
 
 import {
   SelectContent,

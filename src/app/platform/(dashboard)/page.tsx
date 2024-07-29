@@ -19,7 +19,7 @@ import {
 import { Plus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
-import useFetch from "@/hooks/use-fetch";
+import useFetch from "@/hooks/useFetch";
 import Loader from "@/app/loading";
 import { Separator } from "@/components/ui/separator";
 import { Checkbox } from "@/components/ui/checkbox";
