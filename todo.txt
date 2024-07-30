@@ -11,6 +11,7 @@
 [21-07-2024] - Complete the  task adding form
 [22-07-2024] - Add good date picker     
 [23-07-2024] - Implement chatting
+[30-07-2024] - Add avatar feature with user profile and org profile
 
 
 -------- done todo -----------
