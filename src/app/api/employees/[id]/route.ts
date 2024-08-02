@@ -12,13 +12,32 @@ export const GET = async (
   req: NextRequest,
   { params }: { params: { id: string } }
 ) => {
-  await prisma.$connect();
+  try {
+    await prisma.$connect();
+    let id = Number(params.id);
 
-  let employee = await prisma.employee.findFirst({
-    where: { email: params.id },
-  });
+    if (!id) {
+      return NextResponse.json({ error: "id not found" }, { status: 404 });
+    }
 
-  return NextResponse.json({ employee });
+    let employee = await prisma.employee.findUnique({
+      where: { id: id },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        lastActive: true,
+        email: true,
+      },
+    });
 
-  prisma.$disconnect();
+    console.log("id > ", id);
+    console.log("employee> ", employee);
+
+    return NextResponse.json({ employee });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  } finally {
+    prisma.$disconnect();
+  }
 };
