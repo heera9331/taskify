@@ -7,7 +7,6 @@ import axios from "axios";
 const app = express();
 const PORT = 4000;
 
-// CORS options for Express
 app.use(
   cors({
     origin: "*", // Update this to your client origin if needed
@@ -20,7 +19,6 @@ app.use(json());
 
 const server = http.createServer(app);
 
-// CORS options for Socket.io
 const io = new Server(server, {
   cors: {
     origin: "*", // Update this to your client origin if needed
@@ -31,12 +29,18 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log(`${socket.id} user just connected!`);
 
-  socket.on(`privateMessage${senderId}`, async ({ senderId, receiverId, message }) => {
+  socket.on("joinRoom", (userId) => {
+    console.log(`User ${userId} joined room`);
+    socket.join(userId);
+  });
+
+  socket.on("privateMessage", async ({ senderId, receiverId, message }) => {
     console.log("sender", senderId);
     console.log("receiver", receiverId);
     console.log("message", message);
 
     try {
+      io.to(receiverId).emit("privateMessage", { senderId, message });
       console.log("message sent");
     } catch (error) {
       console.error("Error sending message:", error);

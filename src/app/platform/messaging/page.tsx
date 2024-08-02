@@ -15,7 +15,6 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@radix-ui/react-tooltip";
-
 import { useEffect, useState } from "react";
 import Members from "./members";
 import axios from "axios";
@@ -24,9 +23,10 @@ import { AvatarIcon } from "@radix-ui/react-icons";
 import { EmployeeType } from "@/lib/prism-types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-
 import useUser from "@/hooks/useUser";
-import useSocket from "@/hooks/useSocket";
+import { io } from "socket.io-client";
+
+const socket = io("http://localhost:4000");
 
 export function Page() {
   const [activeUser, setActiveUser] = useState<EmployeeType | null>(null);
@@ -34,7 +34,6 @@ export function Page() {
   const [messages, setMessages] = useState<any[]>([]);
   const [message, setMessage] = useState<string>("");
   const user = useUser();
-  const socket = useSocket();
 
   const sendMessage = () => {
     console.log("sending message > ", {
@@ -47,7 +46,7 @@ export function Page() {
       console.log("active > ", activeUser);
       console.log("message > ", message);
 
-      socket.emit(`privateMessage}${activeUserId}`, {
+      socket.emit("privateMessage", {
         senderId: user.id,
         receiverId: activeUserId,
         message,
@@ -71,7 +70,6 @@ export function Page() {
         console.log(`Notification from server:`, data);
       });
 
-      
       socket.on("privateMessage", (data: any) => {
         console.log(`Private message from server:`, data);
         setMessages((prevMessages) => [...prevMessages, data]);
