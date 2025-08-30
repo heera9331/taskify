@@ -68,7 +68,6 @@ const AddTodo = ({ todoBoardId }: { todoBoardId: number }) => {
       return toast({
         role: "alert",
         title: "Successfully added",
-        message: "new todo add to the list",
       });
     } catch (error) {
       setError("Error submitting the todo.");
@@ -97,7 +96,7 @@ const AddTodo = ({ todoBoardId }: { todoBoardId: number }) => {
   return (
     <>
       <Dialog>
-        <DialogTrigger asChild>
+        <DialogTrigger asChild >
           <Button variant="outline">
             <div className="flex gap-1">
               <p>Todo</p>
@@ -105,7 +104,7 @@ const AddTodo = ({ todoBoardId }: { todoBoardId: number }) => {
             </div>
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] bg-white">
           <DialogHeader>
             <DialogTitle>Enter todo details</DialogTitle>
             <DialogDescription>Description</DialogDescription>
@@ -153,7 +152,7 @@ const AddTodo = ({ todoBoardId }: { todoBoardId: number }) => {
                 />
               </div>
 
-              <div className="grid grid-cols-4 items-center gap-4">
+              <div className="grid grid-cols-4 items-center gap-4 z-20">
                 <Label htmlFor="dueDate" className="col-span-4">
                   Due date
                 </Label>
@@ -174,9 +173,9 @@ const AddTodo = ({ todoBoardId }: { todoBoardId: number }) => {
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent className="w-auto p-0 bg-white" align="start">
                     <Calendar
-                      selected={todo.dueDate ? new Date(todo.dueDate) : null}
+                      selected={todo.dueDate ? new Date(todo.dueDate) : new Date("00-00-2000")}
                       onChange={(date: Date) =>
                         setTodo({ ...todo, dueDate: date.toISOString() })
                       }

@@ -57,5 +57,5 @@ app.post("/api", (req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
+  console.log(`Server listening on http://localhost${PORT}`);
 });

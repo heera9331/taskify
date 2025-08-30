@@ -24,9 +24,8 @@ import { EmployeeType } from "@/lib/prism-types";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import useUser from "@/hooks/useUser";
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:4000");
+import { pusherClient } from "@/lib/pusher";
+import { useToast } from "@/components/ui/use-toast";
 
 export function Page() {
   const [activeUser, setActiveUser] = useState<EmployeeType | null>(null);
@@ -34,57 +33,32 @@ export function Page() {
   const [messages, setMessages] = useState<any[]>([]);
   const [message, setMessage] = useState<string>("");
   const user = useUser();
+  const { toast } = useToast();
 
-  const sendMessage = () => {
-    console.log("sending message > ", {
-      senderId: user.id,
-      receiverId: activeUserId,
-      message,
-    });
-    if (message && socket && activeUserId && user) {
-      console.log("sender > ", user);
-      console.log("active > ", activeUser);
-      console.log("message > ", message);
-
-      socket.emit("privateMessage", {
-        senderId: user.id,
-        receiverId: activeUserId,
-        message,
-      });
-
-      setMessage(""); // Clear the input after sending the message
-    }
+  const sendMessageHandler = () => {
+    console.log("message to be sent > ", message);
+    sendMessage(message);
   };
 
-  useEffect(() => {
-    console.log("socket > ", socket);
-
-    if (socket && user) {
-      socket.emit("joinRoom", user.id);
-
-      socket.on("connect", () => {
-        console.log(`Connected to server`);
-      });
-
-      socket.on("notification", (data: any) => {
-        console.log(`Notification from server:`, data);
-      });
-
-      socket.on("privateMessage", (data: any) => {
-        console.log(`Private message from server:`, data);
-        setMessages((prevMessages) => [...prevMessages, data]);
-      });
-
-      socket.on("disconnect", () => {
-        console.log(`Disconnected from server`);
-      });
-
-      return () => {
-        socket.off("privateMessage");
-        socket.disconnect();
-      };
+  const sendMessage = async (message: string) => {
+    try {
+      let res = await axios.post(`/api/messages/user/${activeUserId}`);
+      if (res.status === 201) {
+        toast({
+          role: "alert",
+          title: "Message successfully sent",
+        });
+      } else {
+        let data = await res.data;
+        toast({
+          role: "alert",
+          title: "Message is not sent",
+        });
+      }
+    } catch (error) {
+      console.log("error occured during message sending > ", error);
     }
-  }, [socket, user]);
+  };
 
   useEffect(() => {
     if (activeUserId) {
@@ -100,10 +74,6 @@ export function Page() {
       })();
     }
   }, [activeUserId]);
-
-  if (!socket) {
-    return <p>socket problem</p>;
-  }
 
   return (
     <div className="min-h-screen w-full bg-muted/40 overflow-hidden">
@@ -178,7 +148,7 @@ export function Page() {
                     x-chunk="dashboard-03-chunk-1"
                     onSubmit={(e) => {
                       e.preventDefault();
-                      sendMessage();
+                      sendMessageHandler();
                     }}
                   >
                     <Textarea

@@ -32,9 +32,11 @@ const POST = async (
 ) => {
   try {
     await prisma.$connect();
-    const { content, mediaUrl } = await req.json();
+    const { content } = await req.json();
+    const mediaUrl = null;
+    console.log(req.cookies);
     const user: EmployeeType = JSON.parse(req.cookies.get("user")?.value || "");
-    const senderId = user.id; 
+    const senderId = user.id;
     const receiverId = parseInt(params.id);
 
     console.log("got request /api/message/user/[id]");
@@ -48,6 +50,8 @@ const POST = async (
       },
     });
 
+    console.log(msgRes);
+
     if (!msgRes) {
       return NextResponse.json(
         { error: "internal server error" },
@@ -55,9 +59,12 @@ const POST = async (
       );
     }
 
-    return NextResponse.json({ msg: "msg saved", msgRes }, { status: 201 });
+    return NextResponse.json({ msg: "msg sent", msgRes }, { status: 201 });
   } catch (error) {
-    console.log("POST /api/messages/user/id => error while saving message > ", error);
+    console.log(
+      "POST /api/messages/user/id => error while saving message > ",
+      error
+    );
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

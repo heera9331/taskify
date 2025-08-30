@@ -61,7 +61,7 @@ export function Dashboard() {
       <div className="flex flex-col pt-2 pl-2">
         <aside></aside>
         <main className="flex flex-wrap gap-2">
-          {taskBoards.map((board) => (
+          {taskBoards.map((board: any) => (
             <Card key={board.id} className="min-w-[250px]">
               <CardHeader>
                 <CardTitle>{board.name}</CardTitle>
@@ -71,7 +71,7 @@ export function Dashboard() {
               </CardContent>
             </Card>
           ))}
-          <TaskBoardForm />/
+          <TaskBoardForm />
           <AddTodo todoBoardId={1} />
           <Toaster />
         </main>
